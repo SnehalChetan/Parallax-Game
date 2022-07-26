@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Javascript Rock-Paper-Scissors-Lizard-Spock </title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" href="src/css/style.css"/>
+</head>
+<body>
+<div class="container" id="target">
+  <div class="row text-center">
+    <h2>Let's Play</h2>
+    <p> welcome to Parallax Game</p>
+
+    <div class="col m-3 text-center">
+      <a href="index.html"><button type="button" class="resetBtn btn border-success">Play Boy Runner</button></a>
+      <p><span id="roundNumMsg"></span></p>
+    </div>
+    <div class="col m-3 text-center">
+      <a href="test.html"><button type="button" class="resetBtn btn border-success">Play Car Runner</button></a>
+      <p><span id="roundNumMsg"></span></p>
+    </div>
+  </div>
+  <canvas id="canvas2"></canvas>
+</div>
+
+<script>
+  const canvas = document.getElementById('canvas2');
+  const ctx = canvas.getContext('2d');
+  const CANVAS_WIDTH = canvas.width = 800;
+  const CANVAS_HEIGHT = canvas.height = 900;
+  const IMAGE_WIDTH = 800;
+  const IMAGE_HEIGHT = 900;
+  let gameSpeed = 5;
+  const moves = [];
+
+  const backgroundLayer2 = new Image();
+  backgroundLayer2.src = 'src/images/road.png';
+  const backgroundLayer3 = new Image();
+  backgroundLayer3.src = 'src/images/greengrass.png';
+
+
+  const car1 = new Image();
+  car1.src = 'src/images/bluecarup.png';
+
+  const car2 = new Image();
+  car2.src = 'src/images/yellowDown.png';
+
+  const car5 = new Image();
+  car5.src = 'src/images/yellowUp.png';
+
+  const car4 = new Image();
+  car4.src = 'src/images/greenUp.png';
+
+  const car3 = new Image();
+  car3.src = 'src/images/greenDown.png';
+
+  let y = 0;
+
+  class Layer {
+    constructor(image, speedModifier, width = 800, height = 2000){
+      this.x = 0;
+      this.y = 0;
+      this.width = width; //image width
+      this.height = height; // image height prechecked and set
+      this.y2 = this.height; // as i need to set vertical parallax hence y
+      this.image = image;
+      this.speedModifier = speedModifier;
+      this.speed = gameSpeed * this.speedModifier; // allow to set different speed values to different background image layers
+    }
+
+    /**
+     * implement the vertical parallax by managing y or height of  background images
+     */
+    update(){
+      this.speed = gameSpeed * this.speedModifier;
+        if(this.y >= 1800){  this.y = -this.height + this.y2 - this.speed; }else this.y += this.speed;
+
+        if(this.y2 >= 1800){ this.y2 = -this.height + this.y - this.speed;  }else this.y2 += this.speed;
+    }
+
+    /**
+     * helps to draw image to canvas
+     * @param width
+     * @param height
+     */
+    draw(width = this.width, height = this.height){
+      ctx.drawImage(this.image, this.x, this.y, width, height);
+      ctx.drawImage(this.image, this.x, this.y2, width, height);
+
+    }
+  }
+ /* const layer1 = new Layer(backgroundLayer1 , 0.1);
+  const layer2 = new Layer(backgroundLayer2 , 0.5);*/
+  const layer2 = new Layer(backgroundLayer2, 1, 700, 1800);
+  const layer3 = new Layer(backgroundLayer3, 0.3,680);
+
+  /*player class*/
+  class PlayerCars {
+
+    constructor(image, speedModifier,x,y) {
+      this.image = image;
+      this.x = x;
+      this.y = y;
+      this.width = 30;
+      this.height = 70;
+      this.speedModifier = speedModifier;
+      this.speed = gameSpeed * this.speedModifier;
+    }
+    updateGoUp(){
+      this.speed = gameSpeed * this.speedModifier;
+      if(this.y >= 1000){  this.y = +this.height + this.y2 - this.speed; }else this.y -= this.speed;
+
+      if(this.y2 >= 1000){ this.y2 = +this.height + this.y - this.speed;  }else this.y2 -= this.speed;
+    }
+    draw(x = this.x, y = this.y) {
+      ctx.drawImage(this.image, x, y, this.width, this.height);
+    }
+    updateGoDown(){
+      this.speed = gameSpeed * this.speedModifier;
+      if(this.y >= -1000){  this.y = -this.height + this.y2 - this.speed; }else this.y += this.speed;
+
+      if(this.y2 >= -1000){ this.y2 = -this.height + this.y - this.speed;  }else this.y2 += this.speed;
+    }
+
+  }
+  let blueCar = new PlayerCars(car1, 2,250,600);
+  let greenCarUp = new PlayerCars(car4, 1,400,700);
+  let yellowCarUp = new PlayerCars(car5, 2,150,600);
+  let carx = new PlayerCars(car4, 3,300,500);
+  let cary = new PlayerCars(car5, 2,200,400);
+ let carz = new PlayerCars(car4, 2,400,900);
+  let carq = new PlayerCars(car5, 1,150,750); /**/
+  window.addEventListener('keydown', (e) => {
+    moves[e.key] = true;
+    console.log(moves)
+  })
+  window.addEventListener('keyup', (e) => {
+    delete moves[e.key];
+  })
+
+  const layerArr = [layer3,layer2];
+  const main = () => {
+    ctx.clearRect(0 , 0 , CANVAS_WIDTH, CANVAS_HEIGHT);
+    layerArr.forEach(layer =>{
+      layer.update();
+      layer.draw();
+    });
+    /*player*/
+    if(moves['ArrowUp']){
+      blueCar.y -= blueCar.speed;
+    }
+    if(moves['ArrowRight']){
+      blueCar.x += blueCar.speed;
+    }
+    if(moves['ArrowLeft']){
+      blueCar.x -= blueCar.speed;
+    }
+    if(moves['ArrowDown']){
+      blueCar.y += blueCar.speed;
+    }
+    blueCar.draw();
+    yellowCarUp.draw();
+    yellowCarUp.updateGoUp();
+    greenCarUp.draw();
+    greenCarUp.updateGoUp();
+    carx.draw();
+    carx.updateGoUp();
+    cary.draw();
+    cary.updateGoUp();
+    carz.draw();
+    carz.updateGoDown();
+    carq.draw();/**/
+    carq.updateGoDown();/**/
+
+    requestAnimationFrame(main);
+  }
+
+  main();
+</script>
+</body>
+</html>
