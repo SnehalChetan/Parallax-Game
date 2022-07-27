@@ -20,7 +20,16 @@ backgroundLayer4.src = 'src/images/02_trees and bushes.png';
 
 const backgroundLayer5 = new Image();
 backgroundLayer5.src = 'src/images/01_ground.png';
-console.log(backgroundLayer1);
+
+const backgroundLayer6 = new Image();
+backgroundLayer6.src = 'src/images/bird.png';
+
+
+
+const dogRun = new Image();
+dogRun.src = 'src/images/dogRun.png';
+console.log(Math.round(CANVAS_HEIGHT * IMAGE_WIDTH / IMAGE_HEIGHT));
+
 let x = 0;
 
 class Layer {
@@ -55,14 +64,29 @@ const layer2 = new Layer(backgroundLayer2 , 0.5);
 const layer3 = new Layer(backgroundLayer3 , 0.5);
 const layer4 = new Layer(backgroundLayer4 , 0.2);
 const layer5 = new Layer(backgroundLayer5 , 0.4);
+const layer6 = new Layer(backgroundLayer6 , 0.3);
 
-const layerArr = [layer1,layer2,layer3,layer4,layer5];
+const layerArr = [layer1,layer2,layer3,layer4,layer5,];
+
+let playerSw = 150;
+let playerSx = 0;
+let i = 0;
+
 const main = () => {
     ctx.clearRect(0 , 0 , CANVAS_WIDTH, CANVAS_HEIGHT);
     layerArr.forEach(layer =>{
         layer.update();
         layer.draw();
     });
+    ctx.drawImage(dogRun, playerSx , 0 , 150 , 150 , 0 , 300 , 200, 250);
+    if (i%5 == 4){
+        playerSx+=playerSw;
+        i=0;
+    }
+    if (playerSx> 1050){
+        playerSx = 0;
+    }
+    i++;
     requestAnimationFrame(main);
 }
 
