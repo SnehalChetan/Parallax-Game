@@ -1,6 +1,8 @@
 # Parallax-Game
 Create a simple game with the horizontal parallax effect using html, css, javascript and canvas
 
+https://snehalchetan.github.io/Parallax-Game/
+
 #### Create endless runner game
 Team challenge : `solo`
 
